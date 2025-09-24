@@ -1,0 +1,62 @@
+name: Run Hourly Script
+
+on:
+  schedule:
+    - cron: "0 */1 * * *"  # каждый час
+  workflow_dispatch:
+  
+permissions:
+  contents: write  # ✅ даём права на запись в репо
+
+jobs:
+  run-hourly:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Клонируем репозиторий
+        uses: actions/checkout@v3
+          
+      - name: 🔧 Устанавливаем ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+        
+      - name: 🐍 Устанавливаем Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          
+      - name: 📦 Устанавливаем зависимости
+        run: |
+          pip install -r requirements.txt
+
+      - name: 🚀 Запускаем donload.py
+        run: |
+          python download_video.py
+
+      - name: 💾 Коммитим обновлённую базу
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add videos.db
+          git commit -m "Обновление базы видео [skip ci]" || echo "Нет изменений"
+          git push
+          
+      - name: 📦 Загружаем видео как артефакт
+        uses: actions/upload-artifact@v4
+        with:
+          name: edited-video
+          path: main.mp4
+          overwrite: true
+          
+      - name: 🚀 Запускаем edit.py
+        run: |
+          python edit_video.py
+
+      - name: 📦 Загружаем видео как артефакт
+        uses: actions/upload-artifact@v4
+        with:
+          name: edited-video
+          path: res.mp4
+          overwrite: true
+          
+      - name: 🚀 Запускаем upload.py
+        run: |
+          python upload_video.py
