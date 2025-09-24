@@ -4,7 +4,7 @@ from sql import init_db, save_video_id
 
 def get_latest_shorts():
     max_results = 15
-    channel_ids = ["UCw7SXwdelegoyM6hrM-qAwQ"]
+    channel_ids = ["UCTlkPetOhUbt_CxZBbX6RgQ", "UCcWQRzSmf5fjSEEMkYeouiQ", "UCYbmv--WIE5CnKA5YRXHmDg"]
     shorts_ids = []
 
     for channel_id in channel_ids:
