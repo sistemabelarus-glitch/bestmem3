@@ -14,7 +14,7 @@ def upload(social, video_path, title):
     }
     data = {
         "title": title,
-        "user": "baobao",
+        "user": "bestmem",
         "platform[]": {social}  # 👈 ключевое — загружаем на Instagram
     }
     files = {
