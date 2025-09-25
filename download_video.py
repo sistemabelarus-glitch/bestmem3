@@ -8,7 +8,7 @@ def download_youtube_video(video_id, output_file):
     api_url = f"https://youtube-video-fast-downloader-24-7.p.rapidapi.com/download_short/{video_id}"
     headers = {
         "x-rapidapi-host": "youtube-video-fast-downloader-24-7.p.rapidapi.com",
-        "x-rapidapi-key": "67986ba9cemshbb17d65db207fc3p110386jsne22a822448d8"
+        "x-rapidapi-key": "15f2c1ad56mshc02f494fc55b449p164a0ejsnda0f63325f45"
     }
 
     params = {
