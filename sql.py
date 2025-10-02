@@ -18,14 +18,17 @@ def init_db(db_name="videos.db"):
 
 
 # --- Функция для добавления video_id ---
-def save_video_id(video_id, db_name="videos.db"):
+def save_video(video_id, title, db_name="videos.db"):
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
 
     try:
-        cursor.execute("INSERT INTO videos (video_id, status) VALUES (?, 'new')", (video_id,))
+        cursor.execute(
+            "INSERT INTO videos (video_id, title, status) VALUES (?, ?, 'new')",
+            (video_id, title)
+        )
         conn.commit()
-        print(f"✅ Новый video_id сохранён: {video_id}")
+        print(f"✅ Новый video_id сохранён: {video_id}, title: {title}")
         result = True
     except sqlite3.IntegrityError:
         print(f"⏭ video_id уже есть в базе: {video_id}")
