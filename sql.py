@@ -42,7 +42,7 @@ def save_video_id(video_id, title, db_name="videos.db"):
 def get_all_video_ids(db_name="videos.db"):
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
-    cursor.execute("SELECT video_id, status, added_at FROM videos ORDER BY added_at DESC")
+    cursor.execute("SELECT video_id, status, added_at, title FROM videos ORDER BY added_at DESC")
     rows = cursor.fetchall()
     conn.close()
     # Возвращаем как список словарей
@@ -50,7 +50,8 @@ def get_all_video_ids(db_name="videos.db"):
         {
             "video_id": r[0],
             "status": r[1],
-            "added_at": r[2] if isinstance(r[2], str) else datetime.fromtimestamp(r[2]).isoformat()
+            "added_at": r[2] if isinstance(r[2], str) else datetime.fromtimestamp(r[2]).isoformat(),
+            "title": r[3] 
         }
         for r in rows
     ]
