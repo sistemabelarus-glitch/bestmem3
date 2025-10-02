@@ -38,7 +38,6 @@ def download_youtube_video(video_id, output_file):
                     f.write(chunk)
         print(f"Видео {video_id} сохранено как {output_file}")
 
-        update_video_status(video_id, "downloaded", "videos.db")
 
     else:
         raise Exception(f"Ошибка при скачивании видео: {video_resp.status_code}")
