@@ -24,7 +24,7 @@ def get_latest_shorts():
 
     init_db()  # создаём базу, если её ещё нет
     for vid, title in shorts:
-        save_video(vid, title)
+        save_video_id(vid, title)
 
 
 if __name__ == "__main__":
