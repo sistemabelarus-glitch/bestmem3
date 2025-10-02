@@ -1,11 +1,14 @@
 import feedparser
 from sql import init_db, save_video_id
 
-
 def get_latest_shorts():
     max_results = 15
-    channel_ids = ["UCTlkPetOhUbt_CxZBbX6RgQ", "UCcWQRzSmf5fjSEEMkYeouiQ", "UCYbmv--WIE5CnKA5YRXHmDg"]
-    shorts_ids = []
+    channel_ids = [
+        "UCTlkPetOhUbt_CxZBbX6RgQ",
+        "UCcWQRzSmf5fjSEEMkYeouiQ",
+        "UCYbmv--WIE5CnKA5YRXHmDg"
+    ]
+    shorts = []
 
     for channel_id in channel_ids:
         url = f"https://www.youtube.com/feeds/videos.xml?channel_id={channel_id}"
@@ -15,14 +18,14 @@ def get_latest_shorts():
             print(f"⚠️ Не удалось получить видео с канала {channel_id}")
             continue
 
-        # фильтруем только shorts
         for entry in feed.entries[:max_results]:
-            if "shorts/" in entry.link:  # проверка на формат Shorts
-                shorts_ids.append(entry.yt_videoid)
+            if "shorts/" in entry.link:  # проверка на Shorts
+                shorts.append((entry.yt_videoid, entry.title))
 
     init_db()  # создаём базу, если её ещё нет
-    for vid in shorts_ids:
-        save_video_id(vid)
+    for vid, title in shorts:
+        save_video(vid, title)
+
 
 if __name__ == "__main__":
     get_latest_shorts()
