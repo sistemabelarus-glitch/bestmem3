@@ -33,5 +33,8 @@ def upload(social, video_path, title):
 
 
 if __name__ == "__main__":
-    upload(social ="tiktok", video_path="res.mp4", title="Изучайте китайский на https://baobao.by")
+    new_videos = [v for v in get_all_video_ids() if v["status"] == "new"]
+    main_video_title = new_videos[0]['title']
+    upload(social ="tiktok", video_path="res.mp4", title=main_video_title)
+    update_video_status(video_id, "downloaded", "videos.db")
 
