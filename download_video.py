@@ -10,8 +10,14 @@ headers = {
     "x-rapidapi-key": RAPIDAPI_KEY
 }
 
-def download_youtube_video(video_id: str, output_file: str):
-    """Скачивает YouTube-видео через RapidAPI по его ID"""
+def download_youtube_video(video_id: str, output_file: str, poll_interval: int = 5, timeout: int = 300):
+    """
+    Скачивает YouTube-видео через RapidAPI.
+    - video_id: ID ролика YouTube
+    - output_file: имя выходного файла
+    - poll_interval: пауза между проверками прогресса (сек)
+    - timeout: максимальное время ожидания (сек)
+    """
 
     # 1. Старт задачи
     download_url = f"https://{RAPIDAPI_HOST}/api/v1/download"
@@ -31,24 +37,30 @@ def download_youtube_video(video_id: str, output_file: str):
     if not progress_id:
         raise ValueError("❌ Не удалось получить progressId")
 
-    # 2. Ждём 20 секунд (или можно опрашивать циклом)
-    print("⏳ Ждём 20 секунд...")
-    time.sleep(20)
-
-    # 3. Проверка прогресса
+    # 2. Опрос прогресса
     progress_url = f"https://{RAPIDAPI_HOST}/api/v1/progress"
     params_progress = {"id": progress_id}
 
-    print("Проверяем прогресс...")
-    resp_progress = requests.get(progress_url, headers=headers, params=params_progress)
-    progress_json = resp_progress.json()
-    print("Ответ progress:", progress_json)
+    download_link = None
+    elapsed = 0
 
-    download_link = progress_json.get("downloadUrl")
+    print("Ожидаем готовности файла...")
+    while elapsed < timeout:
+        resp_progress = requests.get(progress_url, headers=headers, params=params_progress)
+        progress_json = resp_progress.json()
+        print("Ответ progress:", progress_json)
+
+        download_link = progress_json.get("downloadUrl")
+        if progress_json.get("finished") and download_link:
+            break
+
+        time.sleep(poll_interval)
+        elapsed += poll_interval
+
     if not download_link:
-        raise ValueError("❌ Не удалось найти downloadUrl в ответе API")
+        raise TimeoutError(f"❌ Видео не готово за {timeout} секунд")
 
-    # 4. Скачивание файла
+    # 3. Скачивание файла
     print(f"⬇️ Скачиваем: {download_link}")
     with requests.get(download_link, stream=True) as r:
         r.raise_for_status()
