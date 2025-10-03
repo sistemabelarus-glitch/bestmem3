@@ -1,5 +1,6 @@
 import requests
 import time
+from sql import init_db, save_video_id, get_all_video_ids, update_video_status
 
 RAPIDAPI_HOST = "youtube-mp4-mp3-downloader.p.rapidapi.com"
 RAPIDAPI_KEY = "3a1024cc78msh53c77f4992c0ed9p1b62f6jsnc027eb0021d0"
