@@ -4,10 +4,11 @@ from sql import init_db, save_video_id
 def get_latest_shorts():
     max_results = 15
     channel_ids = [
-        #"UCjjBjVc0b1cIpNGEeZtS2lg",
-        #"UCBs5YS0JTDAU5hwN9bGVk_A",
-        "UCX6OQ3DkcsbYNE6H8uQQuVA"
-        
+        "UCcpfelE3Ed69kAiAMe8BqpQ", #Динара Курбанова
+        "UCeVuT2QRTldSMCpIpUc4J4A", #Galactics_Shorts
+        "UCif_LFEAFuLxW75FGInSUFA", #правило 34
+        "UCOeKc0TkDDNE2_iq0fPHdoQ", #ShortRtube
+        "UCHYsXcTXatl-g6GWIYAP2mw"  #blackNord
     ]
     shorts = []
 
