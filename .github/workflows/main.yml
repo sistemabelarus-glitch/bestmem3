@@ -75,16 +75,15 @@ jobs:
         if: always()
         run: |
           echo "🔍 Ищем артефакт edited-video..."
-          artifact_id=$(gh api -X GET "repos/${{ github.repository }}/actions/artifacts" --jq '.artifacts[] | select(.name=="edited-video") | .id')
-          
-          if [ -n "$artifact_id" ]; then
-            echo "🗑️ Удаляем артефакт ID=$artifact_id"
-            gh api -X DELETE "repos/${{ github.repository }}/actions/artifacts/$artifact_id"
-            echo "✅ Артефакт edited-video удалён."
-          else
-            echo "⚠️ Артефакт edited-video не найден."
-          fi
+          artifact_ids=$(gh api -X GET "repos/${{ github.repository }}/actions/artifacts" --jq '.artifacts[] | select(.name=="edited-video") | .id')
+      
+          echo "$artifact_ids" | while read -r artifact_id; do
+            if [ -n "$artifact_id" ]; then
+              echo "🗑️ Удаляем артефакт ID=$artifact_id"
+              gh api -X DELETE "repos/${{ github.repository }}/actions/artifacts/$artifact_id"
+              echo "✅ Артефакт $artifact_id удалён."
+            fi
+          done
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 
