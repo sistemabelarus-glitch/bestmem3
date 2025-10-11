@@ -6,7 +6,9 @@ on:
   workflow_dispatch:
   
 permissions:
-  contents: write  # ✅ даём права на запись в репо
+  contents: write
+  actions: write   # ✅ нужно для работы с артефактами через API
+
 
 jobs:
   run-hourly:
