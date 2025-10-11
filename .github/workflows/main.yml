@@ -74,13 +74,17 @@ jobs:
       - name: 🧹 Удаляем артефакт edited-video
         if: always()
         run: |
-          artifact_id=$(gh api repos/${{ github.repository }}/actions/artifacts --paginate -q '.artifacts[] | select(.name=="edited-video") | .id')
+          echo "🔍 Ищем артефакт edited-video..."
+          artifact_id=$(gh api -X GET "repos/${{ github.repository }}/actions/artifacts" --jq '.artifacts[] | select(.name=="edited-video") | .id')
+          
           if [ -n "$artifact_id" ]; then
-            gh api -X DELETE repos/${{ github.repository }}/actions/artifacts/$artifact_id
-            echo "Артефакт edited-video удалён."
+            echo "🗑️ Удаляем артефакт ID=$artifact_id"
+            gh api -X DELETE "repos/${{ github.repository }}/actions/artifacts/$artifact_id"
+            echo "✅ Артефакт edited-video удалён."
           else
-            echo "Артефакт edited-video не найден."
+            echo "⚠️ Артефакт edited-video не найден."
           fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
