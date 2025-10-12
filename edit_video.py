@@ -110,8 +110,8 @@ def main():
     if duration >= 60:
         print("✅ Видео длиннее 1 минуты — сохраняем как res.mp4 без изменений.")
         os.rename("main.mp4", "res.mp4")
-    if duration >= 45 && duration < 60:
-        print("✅ Видео длиннее 45 сек")
+    if duration >= 45 and duration < 60:
+        print("⚠️ Видео длится от 45 до 60 секунд — обрабатываем как короткое.")
         concat_videos("main.mp4", "15.mp4", "res.mp4")
         
     else:
