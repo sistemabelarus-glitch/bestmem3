@@ -104,35 +104,18 @@ def concat_videos(video1, video2, output_video):
 
 
 def main():
-    init_db()
-
-    # 🔹 Получаем список ID из базы
-    video_ids = get_all_video_ids()
-    if not video_ids:
-        print("⚠️ Нет видео ID в базе.")
-        return
-
-    first_video_id = video_ids[0]
-    download_youtube_video(first_video_id, "main.mp4")
     duration = get_video_duration("main.mp4")
     print(f"⏱️ Длительность первого видео: {duration:.2f} сек")
 
     if duration >= 60:
         print("✅ Видео длиннее 1 минуты — сохраняем как res.mp4 без изменений.")
         os.rename("main.mp4", "res.mp4")
-    if duration >= 45:
-         print("✅ Видео длиннее 45 сек")
-         os.rename("main.mp4", "15.mp4")
+    if duration >= 45 && duration < 60:
+        print("✅ Видео длиннее 45 сек")
+        concat_videos("main.mp4", "15.mp4", "res.mp4")
         
     else:
-        print("⚠️ Видео короче 1 минуты — скачиваем ещё одно для склейки.")
-        if len(video_ids) < 2:
-            print("❌ Нет второго видео для склейки.")
-            os.rename("main.mp4", "res.mp4")
-            return
-
-        second_video_id = video_ids[1]
-    
+        print("⚠️ Видео короче 1 минуты — скачиваем ещё одно для склейки.")    
         concat_videos("main.mp4", "main.mp4", "res.mp4")
 
     print("🏁 Готово: файл res.mp4 создан.")
