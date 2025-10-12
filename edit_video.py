@@ -15,56 +15,41 @@ headers = {
 }
 
 
-def download_youtube_video(video_id: str, output_file: str, poll_interval: int = 5, timeout: int = 300):
-    """Скачивает YouTube-видео через RapidAPI и сохраняет в файл."""
-    download_url = f"https://{RAPIDAPI_HOST}/api/v1/download"
-    params = {
-        "format": "720",
-        "id": video_id,
-        "audioQuality": "128",
-        "addInfo": "false"
-    }
+def concat_videos_ffmpeg(video1, video2, output_video):
+    # Временные перекодированные файлы
+    tmp1 = "tmp1.mp4"
+    tmp2 = "tmp2.mp4"
 
-    print(f"🎬 Запускаем задачу для {video_id}...")
-    resp_download = requests.get(download_url, headers=headers, params=params)
-    resp_json = resp_download.json()
-    print("Ответ download:", resp_json)
+    # Шаг 1: перекодируем первое видео (обрезаем до 10 секунд)
+    subprocess.run([
+        "ffmpeg", "-i", video1,
+        "-vf", "scale=1080:1920,setsar=1",
+        "-c:v", "libx264", "-crf", "23", "-preset", "fast",
+        "-c:a", "aac", "-ar", "44100", "-ac", "2",
+        "-y", tmp1
+    ], check=True)
 
-    progress_id = resp_json.get("progressId")
-    if not progress_id:
-        raise ValueError("❌ Не удалось получить progressId")
+    # Шаг 2: перекодируем второе видео без обрезки
+    subprocess.run([
+        "ffmpeg", "-i", video2,
+        "-vf", "scale=1080:1920,setsar=1",
+        "-c:v", "libx264", "-crf", "23", "-preset", "fast",
+        "-c:a", "aac", "-ar", "44100", "-ac", "2",
+        "-y", tmp2
+    ], check=True)
 
-    # Опрос прогресса
-    progress_url = f"https://{RAPIDAPI_HOST}/api/v1/progress"
-    params_progress = {"id": progress_id}
-    elapsed = 0
-    download_link = None
+    # Шаг 3: создаём текстовый файл со списком для конкатенации
+    with open("list.txt", "w") as f:
+        f.write(f"file '{tmp1}'\n")
+        f.write(f"file '{tmp2}'\n")
 
-    print("⏳ Ожидаем готовности файла...")
-    while elapsed < timeout:
-        resp_progress = requests.get(progress_url, headers=headers, params=params_progress)
-        progress_json = resp_progress.json()
-        print("Ответ progress:", progress_json)
+    # Шаг 4: конкатенация без повторного перекодирования
+    subprocess.run([
+        "ffmpeg", "-f", "concat", "-safe", "0",
+        "-i", "list.txt", "-c", "copy", "-y", output_video
+    ], check=True)
 
-        if progress_json.get("finished"):
-            download_link = progress_json.get("downloadUrl")
-            if download_link:
-                break
-        time.sleep(poll_interval)
-        elapsed += poll_interval
-
-    if not download_link:
-        raise TimeoutError(f"❌ Видео не готово за {timeout} секунд")
-
-    # Скачивание файла
-    print(f"⬇️ Скачиваем: {download_link}")
-    with requests.get(download_link, stream=True) as r:
-        r.raise_for_status()
-        with open(output_file, "wb") as f:
-            for chunk in r.iter_content(chunk_size=8192):
-                if chunk:
-                    f.write(chunk)
-    print(f"✅ Видео сохранено как {output_file}")
+    print(f"Склеенные видео сохранены в {output_video}")
 
 
 def get_video_duration(video_path: str) -> float:
@@ -112,7 +97,7 @@ def main():
         os.rename("main.mp4", "res.mp4")
     if duration >= 45 and duration < 60:
         print("⚠️ Видео длится от 45 до 60 секунд — обрабатываем как короткое.")
-        concat_videos("main.mp4", "15.mp4", "res.mp4")
+        concat_videos_ffmpeg("main.mp4", "15.mp4", "res.mp4")
         
     else:
         print("⚠️ Видео короче 1 минуты — скачиваем ещё одно для склейки.")    
