@@ -39,7 +39,10 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add videos.db
           git commit -m "Обновление базы видео [skip ci]" || echo "Нет изменений"
+          # подтягиваем последние изменения и делаем rebase
+          git pull --rebase origin main
           git push
+
           
       - name: 📦 Загружаем видео как артефакт
         uses: actions/upload-artifact@v4
@@ -69,7 +72,10 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add videos.db
           git commit -m "Обновление базы видео [skip ci]" || echo "Нет изменений"
+          # подтягиваем последние изменения и делаем rebase
+          git pull --rebase origin main
           git push
+
 
       - name: 🧹 Удаляем артефакт edited-video
         if: always()
