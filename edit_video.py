@@ -120,6 +120,10 @@ def main():
     if duration >= 60:
         print("✅ Видео длиннее 1 минуты — сохраняем как res.mp4 без изменений.")
         os.rename("main.mp4", "res.mp4")
+    if duration >= 45:
+         print("✅ Видео длиннее 45 сек")
+         os.rename("main.mp4", "15.mp4")
+        
     else:
         print("⚠️ Видео короче 1 минуты — скачиваем ещё одно для склейки.")
         if len(video_ids) < 2:
@@ -128,8 +132,8 @@ def main():
             return
 
         second_video_id = video_ids[1]
-        download_youtube_video(second_video_id, "second.mp4")
-        concat_videos("main.mp4", "second.mp4", "res.mp4")
+    
+        concat_videos("main.mp4", "main.mp4", "res.mp4")
 
     print("🏁 Готово: файл res.mp4 создан.")
 
