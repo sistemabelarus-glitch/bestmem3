@@ -1,5 +1,16 @@
 import sqlite3
 
+
+def show_all(db_name="videos.db"):
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM videos")
+    rows = cursor.fetchall()
+
+    for row in rows:
+        print(row)
+        
 # --- Функция для инициализации базы ---
 def init_db(db_name="videos.db"):
     conn = sqlite3.connect(db_name)
