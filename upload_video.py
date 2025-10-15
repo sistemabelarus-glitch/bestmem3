@@ -38,7 +38,7 @@ if __name__ == "__main__":
     video_id = new_videos[0]['video_id']
     show_all()
     print(main_video_title)
-    upload(social ="tiktok", video_path="res.mp4", title=main_video_title)
     update_video_status(video_id, "downloaded", "videos.db")
+    upload(social ="tiktok", video_path="res.mp4", title=main_video_title)
     show_all()
 
