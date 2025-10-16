@@ -7,7 +7,6 @@ def get_latest_shorts():
         "UCcpfelE3Ed69kAiAMe8BqpQ", #Динара Курбанова
         "UCeVuT2QRTldSMCpIpUc4J4A", #Galactics_Shorts
         "UCif_LFEAFuLxW75FGInSUFA", #правило 34
-        "UCOeKc0TkDDNE2_iq0fPHdoQ", #ShortRtube
         "UCHYsXcTXatl-g6GWIYAP2mw"  #blackNord
     ]
     shorts = []
