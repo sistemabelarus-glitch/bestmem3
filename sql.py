@@ -51,21 +51,29 @@ def save_video_id(video_id, title, db_name="videos.db"):
 
 # --- Функция для получения всех сохранённых video_id (при желании) ---
 def get_all_video_ids(db_name="videos.db"):
+    import sqlite3
+    from datetime import datetime
+
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
-    cursor.execute("SELECT video_id, status, added_at, title FROM videos ORDER BY added_at DESC")
+
+    # Теперь сортируем по дате добавления по возрастанию (старые сначала)
+    cursor.execute("SELECT video_id, status, added_at, title FROM videos ORDER BY added_at ASC")
+
     rows = cursor.fetchall()
     conn.close()
+
     # Возвращаем как список словарей
     return [
         {
             "video_id": r[0],
             "status": r[1],
             "added_at": r[2] if isinstance(r[2], str) else datetime.fromtimestamp(r[2]).isoformat(),
-            "title": r[3] 
+            "title": r[3]
         }
         for r in rows
     ]
+
 
 def update_video_status(video_id, status, db_name="videos.db"):
     conn = sqlite3.connect(db_name)
